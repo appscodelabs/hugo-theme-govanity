@@ -6,11 +6,17 @@
 <ul>
 {{- range $path, $git := $.Site.Data.vanity.paths -}}
     {{- $tpl := resources.Get "template.html" -}}
-    {{- $ctx := (dict "host" $host "path" $path "repo" $git.repo) -}}
+    {{- $ctx := (dict "host" $host "path" $path "repo" $git.repo "version" "") -}}
     {{- $target := (printf "%s/index.html" $path) -}}
     {{- $page := resources.ExecuteAsTemplate $target $ctx $tpl -}}
     <!-- {{ $page.Permalink }} -->
     <li><a href="https://pkg.go.dev/{{$host}}{{$path}}">{{$host}}{{$path}}</a></li>
+    {{- range $git.versions }}
+        {{- $ctx := (dict "host" $host "path" $path "repo" $git.repo "version" (printf "/%s" .)) -}}
+        {{- $target := (printf "%s/%s/index.html" $path .) -}}
+        {{- $page := resources.ExecuteAsTemplate $target $ctx $tpl -}}
+        <!-- {{ $page.Permalink }} -->
+    {{- end }}
 {{- end }}
 </ul>
 
